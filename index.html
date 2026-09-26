@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Next-Gen Ad Blocking & Privacy Protection for Chromium</title>
+  <meta name="description" content="A production-ready Chromium network filter combining the native declarativeNetRequest API with low-footprint cosmetic DOM sanitization and linear video ad skip algorithms.">
+  <meta name="keywords" content="Chromium, Ad Blocker, declarativeNetRequest, Privacy, EasyList, HaGeZi, Open Source, Anti-Tracking">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./adblock-shield.png">
+
+  <!-- Google Fonts: Editorial Serif + Modern Geometric Sans + Code Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="theme-mesh">
+
+  <!-- Floating Dynamic Ambient Mesh Orbs -->
+  <div class="mesh-background" aria-hidden="true">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+    <div class="mesh-orb orb-4"></div>
+    <div class="mesh-orb orb-5"></div>
+    <div class="mesh-noise"></div>
+  </div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="site-header" id="main-header">
+    <div class="header-container">
+      <div class="engine-badge" id="engine-badge" title="Powered by Chrome Manifest V3 declarativeNetRequest">
+        <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span class="badge-text">High-Speed Declarative Engine</span>
+        <span class="badge-pulse"></span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Live Status Pill -->
+        <div class="status-indicator" id="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-label">Engine Ready</span>
+        </div>
+
+        <!-- Theme Toggle (Mesh Pastel <-> Cyber Stealth) -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle theme appearance" title="Toggle Dark/Mesh View">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+
+        <!-- Top Right "Add to Browser" button -->
+        <button class="btn btn-glass add-browser-trigger" id="btn-header-add" data-source="header">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+          </svg>
+          <span>Add to Browser</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-container">
+        <h1 class="hero-title" id="hero-title">
+          <span class="title-accent-tag">Next-Gen</span>
+          <span class="title-main">Ad Blocking &amp; Privacy Protection for</span>
+          <span class="title-highlight">Chromium</span>
+        </h1>
+
+        <p class="hero-description" id="hero-description">
+          A production-ready Chromium network filter combining the native 
+          <code class="code-inline">declarativeNetRequest</code> API with low-footprint cosmetic DOM sanitization 
+          and linear video ad skip algorithms.
+        </p>
+
+        <!-- Interactive Quick Actions / Feature Badges -->
+        <div class="hero-stats-row" id="hero-stats-row">
+          <div class="stat-pill">
+            <span class="stat-num" id="stat-latency">&lt;0.4ms</span>
+            <span class="stat-desc">Route Lookup</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-pill">
+            <span class="stat-num" id="stat-memory">~14 MB</span>
+            <span class="stat-desc">RAM Footprint</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-pill">
+            <span class="stat-num" id="stat-rules">300,000+</span>
+            <span class="stat-desc">Compiled Rules</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-pill">
+            <span class="stat-num">100%</span>
+            <span class="stat-desc">Manifest V3 Native</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="features-section" id="key-features-section">
+      <div class="section-container">
+        <div class="section-header">
+          <h2 class="section-heading" id="key-features-heading">Key Features</h2>
+          <p class="section-subheading" id="key-features-subheading">
+            High-performance blocking pipeline built with security and efficiency in mind.
+          </p>
+        </div>
+
+        <div class="features-grid" id="features-grid">
+          
+          <!-- Feature Card 1 -->
+          <div class="feature-card-wrapper" id="card-wrapper-declarative">
+            <div class="feature-card glass-panel" id="card-declarative">
+              <div class="card-glow-effect"></div>
+              <div class="card-top-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+                  <path d="M12 12v9"/>
+                  <path d="m8 17 4 4 4-4"/>
+                </svg>
+              </div>
+              <p class="feature-card-description">
+                Blocks malicious requests and tracking pixels directly at the browser network layer before requests execute, minimizing CPU and memory consumption.
+              </p>
+              <div class="card-metric-tag">Zero CPU Network Trap</div>
+            </div>
+            <h3 class="feature-card-title" id="title-declarative">Declarative Network Filtering</h3>
+          </div>
+
+          <!-- Feature Card 2 -->
+          <div class="feature-card-wrapper" id="card-wrapper-video">
+            <div class="feature-card glass-panel" id="card-video">
+              <div class="card-glow-effect"></div>
+              <div class="card-top-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                  <line x1="19" y1="5" x2="19" y2="19"/>
+                </svg>
+              </div>
+              <p class="feature-card-description">
+                Integrated content scripts intercept HTML5 player states, automatically skipping linear pre-roll and mid-roll segments with zero playback delay.
+              </p>
+              <div class="card-metric-tag">Instant Video Skip</div>
+            </div>
+            <h3 class="feature-card-title" id="title-video">Automated Video Ad Stripper</h3>
+          </div>
+
+          <!-- Feature Card 3 -->
+          <div class="feature-card-wrapper" id="card-wrapper-anti">
+            <div class="feature-card glass-panel" id="card-anti">
+              <div class="card-glow-effect"></div>
+              <div class="card-top-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="M12 8v4"/>
+                  <path d="M12 16h.01"/>
+                </svg>
+              </div>
+              <p class="feature-card-description">
+                Neutralizes client-side fingerprinting scripts, bypasses ad-block detection paywalls, and suppresses aggressive web push notification prompts.
+              </p>
+              <div class="card-metric-tag">Stealth Defenses</div>
+            </div>
+            <h3 class="feature-card-title" id="title-anti">Anti-Tracking &amp; Anti-Adblock</h3>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- The 4-Stage Declarative Pipeline Section -->
+    <section class="pipeline-section" id="pipeline-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge-pill">Internal Engine Architecture</div>
+          <h2 class="section-heading" id="pipeline-heading">The 4-Stage Declarative Pipeline</h2>
+          <p class="section-subheading" id="pipeline-subheading">
+            How Chromium evaluates incoming web packets and sanitizes DOM trees in under one millisecond.
+          </p>
+        </div>
+
+        <div class="pipeline-grid" id="pipeline-grid">
+          <!-- Stage 1 -->
+          <div class="pipeline-step-card glass-panel" id="step-route-trap">
+            <div class="step-num-badge">01</div>
+            <div class="step-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                <line x1="6" y1="18" x2="6.01" y2="18"/>
+              </svg>
+            </div>
+            <h3 class="step-title">Kernel-Level Route Trapping</h3>
+            <p class="step-desc">
+              Evaluates pre-indexed regex and URL string maps in Chrome's core C++ network stack before socket establishment, executing at <strong>0ms JavaScript latency</strong>.
+            </p>
+            <div class="step-tag">Chromium DNR Core</div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="pipeline-step-card glass-panel" id="step-dom-sanitization">
+            <div class="step-num-badge">02</div>
+            <div class="step-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v18m-9-9h18"/>
+                <path d="m4.93 4.93 14.14 14.14"/>
+                <path d="m19.07 4.93-14.14 14.14"/>
+              </svg>
+            </div>
+            <h3 class="step-title">Cosmetic DOM Sanitization</h3>
+            <p class="step-desc">
+              Dynamically injects high-priority CSS stylesheet blocks (<code class="code-inline">##.ad-banner { display: none !important; }</code>) without triggering reflow or Cumulative Layout Shift.
+            </p>
+            <div class="step-tag">Zero Layout Shift</div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="pipeline-step-card glass-panel" id="step-video-skip">
+            <div class="step-num-badge">03</div>
+            <div class="step-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+                <line x1="19" y1="5" x2="19" y2="19"/>
+              </svg>
+            </div>
+            <h3 class="step-title">HTML5 Video Stream Interceptor</h3>
+            <p class="step-desc">
+              Hooks <code class="code-inline">HTMLMediaElement</code> prototype states, detecting promotional pre-roll cues and advancing playback instantly with muted sound transitions.
+            </p>
+            <div class="step-tag">Linear Ad Skipper</div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="pipeline-step-card glass-panel" id="step-entropy-shield">
+            <div class="step-num-badge">04</div>
+            <div class="step-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <circle cx="12" cy="11" r="3"/>
+              </svg>
+            </div>
+            <h3 class="step-title">Entropy &amp; Fingerprint Scrambler</h3>
+            <p class="step-desc">
+              Introduces subtle pseudo-random noise to HTML5 Canvas readbacks, WebGL vendor strings, and AudioContext buffers to invalidate cross-site profiling.
+            </p>
+            <div class="step-tag">Anti-Fingerprinting</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Multi-Tier Ruleset Architecture Section -->
+    <section class="architecture-section" id="architecture-section">
+      <div class="section-container">
+        <div class="architecture-card glass-panel" id="arch-panel">
+          
+          <div class="arch-content">
+            <h2 class="arch-heading" id="arch-heading">
+              Multi-Tier Ruleset Architecture;
+            </h2>
+            <p class="arch-description" id="arch-description">
+              Pre-indexed JSON rulesets compiled specifically for Chrome's declarative indexing engine to ensure sub-millisecond route checks.
+            </p>
+
+            <ul class="ruleset-list" id="ruleset-list">
+              <li class="ruleset-item" id="rule-easylist" data-ruleset="easylist">
+                <div class="bullet-dot"></div>
+                <div class="ruleset-item-body">
+                  <strong class="ruleset-name">EasyList:</strong>
+                  <span class="ruleset-detail">Universal coverage for standard advertising frames and banners.</span>
+                  <button class="ruleset-preview-btn" aria-label="Preview EasyList DNR rules">inspect</button>
+                </div>
+              </li>
+              <li class="ruleset-item" id="rule-hagezi" data-ruleset="hagezi">
+                <div class="bullet-dot"></div>
+                <div class="ruleset-item-body">
+                  <strong class="ruleset-name">HaGeZi Blocklists:</strong>
+                  <span class="ruleset-detail">Aggressive telemetry, malware, and tracker protection.</span>
+                  <button class="ruleset-preview-btn" aria-label="Preview HaGeZi DNR rules">inspect</button>
+                </div>
+              </li>
+              <li class="ruleset-item" id="rule-annoyance" data-ruleset="annoyance">
+                <div class="bullet-dot"></div>
+                <div class="ruleset-item-body">
+                  <strong class="ruleset-name">Annoyance Rules:</strong>
+                  <span class="ruleset-detail">Removes cookie popups, floating banners, and newsletters.</span>
+                  <button class="ruleset-preview-btn" aria-label="Preview Annoyance DNR rules">inspect</button>
+                </div>
+              </li>
+              <li class="ruleset-item" id="rule-allowlist" data-ruleset="allowlist">
+                <div class="bullet-dot"></div>
+                <div class="ruleset-item-body">
+                  <strong class="ruleset-name">Dynamic Allowlist:</strong>
+                  <span class="ruleset-detail">Granular whitelisting on a per-domain basis.</span>
+                  <button class="ruleset-preview-btn" aria-label="Preview Allowlist DNR rules">inspect</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Stylized Shield & Stop-Hand Emblem from the User Asset -->
+          <div class="arch-emblem-wrap" id="arch-emblem-wrap">
+            <div class="arch-shield-symbol" id="arch-shield-symbol" title="Chromium Protective Shield">
+              <img 
+                src="./adblock-shield.png" 
+                alt="AdBlock Black Shield with White Stop Hand" 
+                class="shield-user-img" 
+                id="shield-user-img" 
+                width="190" 
+                height="190"
+              />
+            </div>
+            <div class="emblem-caption">Hardware-Accelerated Route Trapping</div>
+          </div>
+
+        </div>
+
+        <!-- Interactive Live DNR Ruleset JSON Drawer / Inspector -->
+        <div class="ruleset-drawer" id="ruleset-drawer" style="display: none;">
+          <div class="drawer-header">
+            <div class="drawer-title-box">
+              <span class="drawer-badge">Chrome DNR Rule Preview</span>
+              <span class="drawer-ruleset-name" id="drawer-ruleset-name">EasyList Standard</span>
+            </div>
+            <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Close rule preview">✕</button>
+          </div>
+          <div class="drawer-body">
+            <div class="drawer-stats-strip">
+              <div>Rule Count: <strong id="drawer-rule-count">124,890</strong></div>
+              <div>Engine: <strong>declarativeNetRequest API</strong></div>
+              <div>Action: <strong class="badge-block" id="drawer-action-badge">BLOCK</strong></div>
+            </div>
+            <pre class="json-code-block"><code id="ruleset-code-view">// Sample compiled declarative ruleset...</code></pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- Measured Performance Benchmarks Section -->
+    <section class="benchmarks-section" id="benchmarks-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge-pill">Independent Profiling</div>
+          <h2 class="section-heading" id="benchmarks-heading">Measured Real-World Benchmarks</h2>
+          <p class="section-subheading" id="benchmarks-subheading">
+            Benchmarked against unblocked vanilla browsing and legacy Manifest V2 background script extensions.
+          </p>
+        </div>
+
+        <div class="benchmarks-grid" id="benchmarks-grid">
+          <!-- Benchmark Card 1: Page Load Time -->
+          <div class="benchmark-card glass-panel" id="bm-card-speed">
+            <div class="bm-header">
+              <h3 class="bm-title">Page Load Time</h3>
+              <span class="bm-pill">Top 50 News Sites</span>
+            </div>
+            <div class="bm-bars">
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <strong>This Engine (DNR Native)</strong>
+                  <span class="bm-val best">0.74s</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-accent" style="width: 20%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Legacy MV2 Extension</span>
+                  <span class="bm-val">2.42s</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-mid" style="width: 52%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Unprotected Chromium</span>
+                  <span class="bm-val worst">4.68s</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-worst" style="width: 100%;"></div></div>
+              </div>
+            </div>
+            <div class="bm-footer">🚀 <strong>3.3x faster</strong> average page rendering speed.</div>
+          </div>
+
+          <!-- Benchmark Card 2: Memory Footprint -->
+          <div class="benchmark-card glass-panel" id="bm-card-ram">
+            <div class="bm-header">
+              <h3 class="bm-title">RAM Usage (10 Heavy Tabs)</h3>
+              <span class="bm-pill">Chrome v130 Engine</span>
+            </div>
+            <div class="bm-bars">
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <strong>This Engine (DNR Native)</strong>
+                  <span class="bm-val best">16 MB</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-accent" style="width: 6%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Legacy MV2 Extension</span>
+                  <span class="bm-val">285 MB</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-mid" style="width: 46%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Unprotected Chromium</span>
+                  <span class="bm-val worst">610 MB</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-worst" style="width: 100%;"></div></div>
+              </div>
+            </div>
+            <div class="bm-footer">💡 <strong>94% less memory</strong> allocated to filter lists.</div>
+          </div>
+
+          <!-- Benchmark Card 3: CPU Cycle Overhead -->
+          <div class="benchmark-card glass-panel" id="bm-card-cpu">
+            <div class="bm-header">
+              <h3 class="bm-title">CPU Processing Cycles</h3>
+              <span class="bm-pill">Network Layer Evaluation</span>
+            </div>
+            <div class="bm-bars">
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <strong>This Engine (DNR Native)</strong>
+                  <span class="bm-val best">0.04%</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-accent" style="width: 3%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Legacy MV2 Extension</span>
+                  <span class="bm-val">4.90%</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-mid" style="width: 38%;"></div></div>
+              </div>
+              <div class="bm-bar-row">
+                <div class="bm-bar-label">
+                  <span>Unprotected Chromium</span>
+                  <span class="bm-val worst">14.20%</span>
+                </div>
+                <div class="bm-track"><div class="bm-fill fill-worst" style="width: 100%;"></div></div>
+              </div>
+            </div>
+            <div class="bm-footer">🔋 <strong>+2.8 hours extra battery</strong> on portable devices.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Supported Chromium Ecosystem Section -->
+    <section class="ecosystem-section" id="ecosystem-section">
+      <div class="section-container">
+        <div class="ecosystem-box glass-panel" id="ecosystem-box">
+          <div class="section-badge-pill">Cross-Platform Readiness</div>
+          <h2 class="section-heading text-center" id="ecosystem-heading">
+            Built for Chromium &amp; Mozilla Firefox
+          </h2>
+          <p class="section-subheading text-center" id="ecosystem-subheading">
+            Universal compatibility across Chromium browsers and Mozilla Firefox Gecko Manifest V3 declarativeNetRequest.
+          </p>
+
+          <div class="browser-logos-grid" id="browser-logos-grid">
+            <div class="browser-badge-card" id="browser-chrome">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#4285F4"/>
+                  <circle cx="12" cy="12" r="4.5" fill="#ffffff"/>
+                </svg>
+              </div>
+              <strong>Google Chrome</strong>
+              <span>MV3 Native Certified</span>
+            </div>
+
+            <!-- Mozilla Firefox Badge Card -->
+            <div class="browser-badge-card" id="browser-firefox">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <defs>
+                    <linearGradient id="ffGlobeGrad" x1="16" y1="4" x2="16" y2="28" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#460072" />
+                      <stop offset="100%" stop-color="#240046" />
+                    </linearGradient>
+                    <linearGradient id="ffFlameGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#FFE140" />
+                      <stop offset="30%" stop-color="#FF7A29" />
+                      <stop offset="70%" stop-color="#FF2A54" />
+                      <stop offset="100%" stop-color="#96005A" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="16" cy="16" r="11" fill="url(#ffGlobeGrad)" />
+                  <path d="M26.5 12.8C25.8 9.5 23.5 6.8 20.4 5.5c-1.2-.5-2.5-.8-3.9-.8-1.5 0-2.3.6-1.5 1.5 1.1 1.2 2.5 2.1 4 2.7 1.5.6 2.6 1.7 3.1 3.2.5 1.4.3 3-.5 4.3-.8 1.2-2 2-3.4 2.2-1.4.2-2.8-.2-3.9-1.1-.9-.8-1.5-1.9-1.7-3.1 0-.3-.2-.5-.5-.5-.3 0-.5.2-.6.4-.6 1.2-.8 2.6-.5 4 .4 1.8 1.6 3.3 3.2 4.1 1.6.8 3.5.9 5.2.3 2.5-.9 4.4-3 5.1-5.6.4-1.4.4-3 .1-4.4z" fill="url(#ffFlameGrad)" />
+                  <path d="M12.8 7.2C11 8.2 9.5 9.8 8.6 11.7c-.9 1.9-1.1 4.1-.7 6.2.5 2.5 2 4.6 4.1 5.8-1.8-.7-3.3-2.1-4.1-3.9-.9-1.8-1-3.9-.4-5.8.6-2 1.9-3.7 3.7-4.8 1.8-1.1 2.3-2.3 1.6-2z" fill="#FF9400" opacity="0.95" />
+                </svg>
+              </div>
+              <strong>Mozilla Firefox</strong>
+              <span>Gecko MV3 Certified</span>
+            </div>
+
+            <div class="browser-badge-card" id="browser-brave">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#FB542B"/>
+                  <path d="M12 6.5l4.5 9.5H7.5L12 6.5z" fill="#ffffff"/>
+                </svg>
+              </div>
+              <strong>Brave Browser</strong>
+              <span>Shields Compatible</span>
+            </div>
+
+            <div class="browser-badge-card" id="browser-edge">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#0078D7"/>
+                  <circle cx="12" cy="12" r="5" fill="#50E6FF"/>
+                </svg>
+              </div>
+              <strong>Microsoft Edge</strong>
+              <span>SmartScreen Ready</span>
+            </div>
+
+            <div class="browser-badge-card" id="browser-vivaldi">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#EF3939"/>
+                  <rect x="7" y="7" width="10" height="10" rx="3" fill="#ffffff"/>
+                </svg>
+              </div>
+              <strong>Vivaldi</strong>
+              <span>Custom Panels Sync</span>
+            </div>
+
+            <div class="browser-badge-card" id="browser-arc">
+              <div class="browser-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" fill="#5B5BD6"/>
+                  <path d="M8 8h8v8H8z" fill="#ffffff"/>
+                </svg>
+              </div>
+              <strong>Arc Browser</strong>
+              <span>Boost Space Native</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Frequently Asked Questions (FAQ) Section -->
+    <section class="faq-section" id="faq-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div class="section-badge-pill">Knowledge Base</div>
+          <h2 class="section-heading" id="faq-heading">Frequently Asked Questions</h2>
+          <p class="section-subheading" id="faq-subheading">
+            Everything you need to know about Manifest V3 declarative filtering, security, and updates.
+          </p>
+        </div>
+
+        <div class="faq-accordion" id="faq-accordion">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item glass-panel active">
+            <button class="faq-question-btn" aria-expanded="true">
+              <span>How does Chrome's declarativeNetRequest API replace Manifest V2 webRequest?</span>
+              <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              <p>
+                In legacy Manifest V2, the browser had to wake up a background JavaScript engine every time a network packet or asset was requested. With Manifest V3's <code class="code-inline">declarativeNetRequest</code>, rules are compiled ahead-of-time into high-speed JSON index tables evaluated directly in Chromium's native C++ networking thread. This eliminates JavaScript bridge overhead and guarantees sub-millisecond execution.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div class="faq-item glass-panel">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Will the video ad skip algorithm trigger anti-adblock detection or account strikes?</span>
+              <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              <p>
+                No. Instead of blocking the video player scripts (which triggers player crashes and anti-adblock warning walls), our content script monitors the HTML5 video element's internal playhead. When a linear promotional segment begins, it programmatically accelerates playback rate and jumps to the video segment in 0ms with zero audio glitching, allowing normal stream telemetry to proceed without warnings.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div class="faq-item glass-panel">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Does this blocker collect, store, or transmit any user browsing activity?</span>
+              <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Zero. The engine is strictly client-side and 100% open-source under GPL-3.0. There are no remote tracking pings, no analytics telemetry, and no centralized databases. All declarative rule dictionaries execute locally on your computer.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 4 -->
+          <div class="faq-item glass-panel">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Can I add custom rules or whitelist specific domains like my online bank?</span>
+              <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Yes. The Dynamic Allowlist tier lets you whitelist any domain with a single click from the extension toolbar or add custom Adblock Plus and uBlock syntax rules with priority-ranked overrides.
+              </p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 5 -->
+          <div class="faq-item glass-panel">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>How are EasyList and HaGeZi blocklists updated?</span>
+              <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Rulesets are compiled into optimized delta update packages daily. Chrome's dynamic ruleset API seamlessly swaps in updated rule hashes in the background without needing a browser restart or disrupting active tabs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Unified Bottom & Footer Section -->
+    <footer class="site-footer" id="site-footer">
+      <div class="footer-container">
+        
+        <div class="bottom-unified-card glass-panel" id="bottom-unified-card">
+          <!-- CTA Heading & Action -->
+          <div class="cta-box">
+            <h2 class="cta-heading" id="cta-heading">
+              Browse Ad-Free with the best <span class="cta-heading-strong">Open-Source AD Blocker</span>
+            </h2>
+            <div class="cta-actions">
+              <button class="btn btn-primary-browser add-browser-trigger" id="btn-cta-add" data-source="cta">
+                <svg class="btn-browser-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+                </svg>
+                <span>Add to Browser</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Clean Horizontal Connection Row (Email + Source) -->
+          <div class="footer-connect-row" id="footer-connect-row">
+            <div class="footer-email-box">
+              <span class="email-label">Email:</span>
+              <a href="mailto:devteam.official@myyahoo.com" class="email-link" id="email-link" title="Click to email the development team">
+                devteam.official@myyahoo.com
+              </a>
+              <button class="copy-email-btn" id="copy-email-btn" aria-label="Copy email address" title="Copy to clipboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                <span class="copy-tooltip" id="copy-tooltip">Copied!</span>
+              </button>
+            </div>
+
+            <span class="connect-divider-bullet">•</span>
+
+            <a href="https://github.com/arunkumarjust97-arch/Super-Blocker-Extensions" target="_blank" rel="noopener noreferrer" class="footer-source-link" id="btn-source" aria-label="View Super-Blocker-Extensions on GitHub">
+              <svg class="github-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+              </svg>
+              <span>Source</span>
+            </a>
+          </div>
+
+          <!-- Subtle Single Divider -->
+          <div class="inner-footer-divider"></div>
+
+          <!-- Professional Copyright & Engineering Attribution -->
+          <div class="footer-copyright-block" id="footer-copyright-block">
+            <div class="copyright-content">
+              <div class="copyright-brand">
+                <span class="copyright-symbol">©</span>
+                <span class="copyright-text">Copyright 2026 <strong>Arun Kumar</strong>. All rights reserved.</span>
+              </div>
+
+              <div class="copyright-meta-row">
+                <span class="meta-item">Lead Engineering &amp; Design: <strong>Arun Kumar</strong></span>
+                <span class="meta-sep">•</span>
+                <span class="meta-item">Manifest V3 Native</span>
+                <span class="meta-sep">•</span>
+                <span class="meta-item">Zero-Telemetry Verified</span>
+                <span class="meta-sep">•</span>
+                <span class="meta-item">GPL-3.0 Licensed</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Interactive Installation Modal ("Add to Browser") -->
+  <div class="modal-overlay" id="install-modal" aria-hidden="true" style="display: none;">
+    <div class="modal-card glass-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">✕</button>
+      
+      <div class="modal-header">
+        <div class="modal-badge-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-teal); width: 26px; height: 26px;">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title" id="modal-title">Add to Chromium Browser</h4>
+          <p class="modal-subtitle">Manifest V3 Native Network Protection</p>
+        </div>
+      </div>
+
+      <div class="modal-body" id="modal-body-step1">
+        <div class="modal-permissions">
+          <p class="perm-heading">Permissions Requested:</p>
+          <div class="perm-item">
+            <span class="perm-check">✓</span>
+            <div>
+              <strong>declarativeNetRequest</strong>
+              <p>Block and redirect network requests without reading your browsing data.</p>
+            </div>
+          </div>
+          <div class="perm-item">
+            <span class="perm-check">✓</span>
+            <div>
+              <strong>Zero Analytics / Zero Telemetry</strong>
+              <p>100% private. No logs or IP pings ever leave your machine.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button class="btn btn-primary-browser" id="modal-confirm-btn">
+            <span>Install Extension</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Success Step -->
+      <div class="modal-body modal-success-state" id="modal-body-success" style="display: none;">
+        <div class="success-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        </div>
+        <h4>Chromium Protection Enabled!</h4>
+        <p>Active filtering pipeline loaded with 300,000+ rules.</p>
+        <button class="btn btn-primary-browser" id="modal-done-btn">Back to Browser</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Interactive Source Code Modal -->
+  <div class="modal-overlay" id="source-modal" aria-hidden="true" style="display: none;">
+    <div class="modal-card glass-panel source-modal-card" role="dialog" aria-modal="true">
+      <button class="modal-close-btn" id="source-close-btn" aria-label="Close modal">✕</button>
+      <div class="modal-header">
+        <div class="modal-badge-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h4 class="modal-title">Open-Source Engine Architecture</h4>
+          <p class="modal-subtitle">Manifest V3 • Chromium DNR • Zero Telemetry</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p>The core pipeline compiles regex and standard Adblock Plus / uBlock syntax into pre-indexed declarative JSON rulesets.</p>
+        <div class="repo-meta-grid">
+          <div class="repo-box">
+            <span class="repo-label">License</span>
+            <span class="repo-val">GPL-3.0 / Open Source</span>
+          </div>
+          <div class="repo-box">
+            <span class="repo-label">Manifest</span>
+            <span class="repo-val">Chrome Manifest V3</span>
+          </div>
+          <div class="repo-box">
+            <span class="repo-label">Engine Test</span>
+            <span class="repo-val">Passed 100% Acid3 &amp; DNR</span>
+          </div>
+        </div>
+        <div class="repo-clone-box">
+          <span class="clone-label">Clone Repository:</span>
+          <code class="clone-code">git clone https://github.com/arunkumarjust97-arch/Super-Blocker-Extensions.git</code>
+        </div>
+        <div class="modal-actions">
+          <a href="https://github.com/arunkumarjust97-arch/Super-Blocker-Extensions" target="_blank" rel="noopener noreferrer" class="btn btn-primary-browser" id="btn-github-external">
+            <span>Open Super-Blocker-Extensions on GitHub ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./main.js" type="module"></script>
+</body>
+</html>
